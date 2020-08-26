@@ -7,28 +7,40 @@ part 'database.g.dart';
 
 class Folders extends Table {
   TextColumn get folderName => text().withLength(min: 1, max: 200)();
+
   TextColumn get folderPath => text().withLength(min: 1, max: 200)();
+
   TextColumn get created => text().withLength(min: 1, max: 200)();
+
   TextColumn get lastModified => text().withLength(min: 1, max: 200)();
+
   TextColumn get imagePath => text().withLength(min: 1, max: 200)();
+
   IntColumn get imageIndex => integer().nullable()();
 
   @override
-  Set<Column> get primaryKey => {folderPath};
+  Set<Column> get primaryKey => {imagePath};
 }
 
-@UseMoor(tables: [Folders])
+@UseMoor(
+  tables: [Folders],
+  queries: {
+    '_getAllDirectories': 'SELECT DISTINCT folderName, folderPath, created, lastModified FROM folders',
+    '_getAllImages' : 'SELECT imagePath, imageIndex FROM folders WHERE folderName = ?',
+
+  },
+)
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(FlutterQueryExecutor.inDatabaseFolder(
-    path: 'db.sqlite', logStatements: true,
-  ));
+  AppDatabase()
+      : super(FlutterQueryExecutor.inDatabaseFolder(
+          path: 'db.sqlite',
+          logStatements: true,
+        ));
 
   @override
   int get schemaVersion => 2;
 
   Future<List<Folder>> getAllFolders() => select(folders).get();
-
-  Future<List<Folder>> getAllImages(String folderName) => (select(folders)..where((tbl) => tbl._folderPath.equals(folderName))).get();
 
   Stream<List<Folder>> watchAllFolders() => select(folders).watch();
 

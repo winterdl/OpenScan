@@ -9,6 +9,7 @@ import 'package:openscan/Utilities/file_operations.dart';
 import 'package:openscan/Widgets/Image_Card.dart';
 import 'package:openscan/screens/home_screen.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:reorderables/reorderables.dart';
 import 'package:share_extend/share_extend.dart';
 
 class ViewDocument extends StatefulWidget {
@@ -69,7 +70,7 @@ class _ViewDocumentState extends State<ViewDocument> {
         Cropper cropper = Cropper();
         imageFile = await cropper.cropImage(image);
       }
-      imageFile = File(imageFile.path ?? image.path);
+      imageFile = File((imageFile != null) ? imageFile.path : image.path);
       setState(() {});
       await fileOperations.saveImage(
         image: imageFile,
@@ -86,6 +87,8 @@ class _ViewDocumentState extends State<ViewDocument> {
       ));
 
       await fileOperations.deleteTemporaryFiles();
+      image = null;
+      imageFile = null;
       if (widget.quickScan) createImage();
       getImages();
     }
@@ -120,10 +123,12 @@ class _ViewDocumentState extends State<ViewDocument> {
 //        print(imageFilesWithDate.length);
       });
     });
+//    getImageCards();
+    imageCards = getImageCards();
   }
 
   getImageCards() {
-    imageCards = [];
+//    imageCards = [];
 //    print(imageFilesWithDate);
     for (var i in imageFilesWithDate) {
       if (!imageCards.contains(
@@ -142,12 +147,23 @@ class _ViewDocumentState extends State<ViewDocument> {
         ));
       }
     }
+//    setState(() {});
+    print(imageFilesWithDate);
+    print(imageCards);
     return imageCards;
   }
 
+  void _onReorder(int oldIndex, int newIndex) {
+    setState(() {
+      Widget row = imageCards.removeAt(oldIndex);
+      imageCards.insert(newIndex, row);
+    });
+  }
+
   databaseTester() async {
-//    print(await database.getAllFolders());
-    print(AppDatabase().getAllImages(fileName));
+    print(await database.getAllFolders());
+    print(await database._getAllDirectories());
+//    print(AppDatabase().getAllImages(fileName));
   }
 
   @override
@@ -157,6 +173,7 @@ class _ViewDocumentState extends State<ViewDocument> {
     if (widget.dirPath != null) {
       dirPath = widget.dirPath;
       getImages();
+
       fileName = dirPath.substring(dirPath.lastIndexOf("/") + 1);
     } else {
       createDirectoryName();
@@ -174,7 +191,7 @@ class _ViewDocumentState extends State<ViewDocument> {
         backgroundColor: primaryColor,
         key: scaffoldKey,
         appBar: AppBar(
-          elevation: 0,
+//          elevation: 0,
           centerTitle: true,
           backgroundColor: primaryColor,
           leading: IconButton(
@@ -227,26 +244,30 @@ class _ViewDocumentState extends State<ViewDocument> {
             }),
           ],
         ),
-        body: RefreshIndicator(
-          backgroundColor: primaryColor,
-          color: secondaryColor,
-          onRefresh: () async {
-            getImages();
-          },
-          child: Padding(
-            padding: EdgeInsets.all(size.width * 0.01),
-            child: Theme(
-              data: Theme.of(context).copyWith(accentColor: primaryColor),
-              child: ListView(
-                children: [
-                  Wrap(
-                    spacing: size.width * 0.013,
-                    runSpacing: size.width * 0.013,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: getImageCards(),
-                  ),
-                ],
-              ),
+        body: Padding(
+          padding: EdgeInsets.symmetric(vertical:size.width * 0.01),
+          child: Theme(
+            data: Theme.of(context).copyWith(accentColor: primaryColor),
+            child: ListView(
+              children: [
+                ReorderableWrap(
+                  //TODO: Check
+//                    spacing: size.width * 0.01,
+//                    runSpacing: size.width * 0.01,
+                  minMainAxisCount: 2,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: getImageCards(),
+                  onReorder: _onReorder,
+                  onNoReorder: (int index) {
+                    debugPrint(
+                        '${DateTime.now().toString().substring(5, 22)} reorder cancelled. index:$index');
+                  },
+                  onReorderStarted: (int index) {
+                    debugPrint(
+                        '${DateTime.now().toString().substring(5, 22)} reorder started: index:$index');
+                  },
+                ),
+              ],
             ),
           ),
         ),

@@ -289,7 +289,7 @@ class $FoldersTable extends Folders with TableInfo<$FoldersTable, Folder> {
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {folderPath};
+  Set<GeneratedColumn> get $primaryKey => {imagePath};
   @override
   Folder map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;

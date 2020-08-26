@@ -26,6 +26,7 @@ dependencies:
   flutter_speed_dial: ^1.2.5
   open_file: ^3.0.1
   moor_flutter: ^1.4.0
+  reorderables: ^0.3.2
 
   # flutter_scanner_cropper:
   #   git:
