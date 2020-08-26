@@ -1,14 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:open_file/open_file.dart';
 import 'package:openscan/Utilities/constants.dart';
 import 'package:openscan/Utilities/cropper.dart';
+import 'package:openscan/Utilities/database.dart';
 import 'package:openscan/Utilities/file_operations.dart';
 import 'package:openscan/Widgets/Image_Card.dart';
 import 'package:openscan/screens/home_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_extend/share_extend.dart';
-import 'package:open_file/open_file.dart';
 
 class ViewDocument extends StatefulWidget {
   static String route = "ViewDocument";
@@ -34,6 +35,8 @@ class _ViewDocumentState extends State<ViewDocument> {
   String fileName;
   bool _statusSuccess;
   var _openResult;
+  var database;
+  Folder folder;
 
   void imageEditCallback() {
     getImages();
@@ -52,6 +55,7 @@ class _ViewDocumentState extends State<ViewDocument> {
   Future<void> createDirectoryName() async {
     Directory appDir = await getExternalStorageDirectory();
     dirPath = "${appDir.path}/OpenScan ${DateTime.now()}";
+    fileName = dirPath.substring(dirPath.lastIndexOf("/") + 1);
   }
 
   Future<dynamic> createImage() async {
@@ -72,6 +76,15 @@ class _ViewDocumentState extends State<ViewDocument> {
         i: imageFilesWithDate.length + 1,
         dirPath: dirPath,
       );
+
+      database.insertImage(Folder(
+        folderName: fileName,
+        folderPath: dirPath,
+        created: '  ',
+        lastModified: '   ',
+        imagePath: imageFile.path ?? image.path,
+      ));
+
       await fileOperations.deleteTemporaryFiles();
       if (widget.quickScan) createImage();
       getImages();
@@ -92,9 +105,9 @@ class _ViewDocumentState extends State<ViewDocument> {
       };
       //TODO: Fix delete bug
       if (!imageFilesWithDate.contains(imageFileWithDate)) {
-        print(imageFilesWithDate.contains(imageFileWithDate));
+//        print(imageFilesWithDate.contains(imageFileWithDate));
         imageFilesWithDate.add(imageFileWithDate);
-        print(imageFileWithDate);
+//        print(imageFileWithDate);
       }
 
       imageFilesWithDate
@@ -104,7 +117,7 @@ class _ViewDocumentState extends State<ViewDocument> {
           imageFilesPath.add(image["file"].path);
       }
       setState(() {
-        print(imageFilesWithDate.length);
+//        print(imageFilesWithDate.length);
       });
     });
   }
@@ -132,6 +145,11 @@ class _ViewDocumentState extends State<ViewDocument> {
     return imageCards;
   }
 
+  databaseTester() async {
+//    print(await database.getAllFolders());
+    print(AppDatabase().getAllImages(fileName));
+  }
+
   @override
   void initState() {
     super.initState();
@@ -144,6 +162,8 @@ class _ViewDocumentState extends State<ViewDocument> {
       createDirectoryName();
       createImage();
     }
+    database = AppDatabase();
+    databaseTester();
   }
 
   @override
@@ -186,10 +206,12 @@ class _ViewDocumentState extends State<ViewDocument> {
                 );
                 Directory storedDirectory =
                     await getApplicationDocumentsDirectory();
-                final result = await OpenFile.open('${storedDirectory.path}/$fileName.pdf');
+                final result = await OpenFile.open(
+                    '${storedDirectory.path}/$fileName.pdf');
 
                 setState(() {
-                  _openResult = "type=${result.type}  message=${result.message}";
+                  _openResult =
+                      "type=${result.type}  message=${result.message}";
                   print(_openResult);
                 });
               },

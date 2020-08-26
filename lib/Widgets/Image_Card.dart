@@ -2,31 +2,32 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_scanner_cropper/flutter_scanner_cropper.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
 import 'package:openscan/Utilities/cropper.dart';
-// import 'package:openscan/Utilities/DatabaseHelper.dart';
+import 'package:openscan/Utilities/database.dart';
 
 import '../Utilities/constants.dart';
 
 class ImageCard extends StatelessWidget {
-  const ImageCard(
-      {this.imageFile,
-      this.imageFileEditCallback,
-      this.fileName,
-      this.dirPath});
+  const ImageCard({
+    this.imageFile,
+    this.imageFileEditCallback,
+    this.fileName,
+    this.dirPath,
+    this.folder,
+  });
 
   final File imageFile;
   final Function imageFileEditCallback;
   final String fileName;
   final String dirPath;
+  final Folder folder;
 
   @override
   Widget build(BuildContext context) {
     TransformationController _controller = TransformationController();
     print(dirPath);
-    // DatabaseHelper database = DatabaseHelper();
     Size size = MediaQuery.of(context).size;
     return RaisedButton(
       elevation: 20,
@@ -44,6 +45,10 @@ class ImageCard extends StatelessWidget {
                   child: InteractiveViewer(
                     transformationController: _controller,
                     maxScale: 10,
+                    //TODO: Check
+                    onInteractionEnd: (scaleEndDetails) {
+                      _controller.value = Matrix4.identity();
+                    },
                     child: GestureDetector(
                       onDoubleTap: () {
                         _controller.value = Matrix4.identity();
