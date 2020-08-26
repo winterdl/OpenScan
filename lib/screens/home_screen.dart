@@ -362,7 +362,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ViewDocument(
-                      quickScan: false,
                     ),
                   ),
                 ).whenComplete(() {

@@ -27,7 +27,7 @@ class _ViewDocumentState extends State<ViewDocument> {
   List<Map<String, dynamic>> imageFilesWithDate = [];
   List<String> imageFilesPath = [];
   List<Widget> imageCards = [];
-  String imageFilePath;
+  File imageFile;
 
   FileOperations fileOperations;
   String dirPath;
@@ -63,10 +63,9 @@ class _ViewDocumentState extends State<ViewDocument> {
         //   'dest': '/data/user/0/com.ethereal.openscan/cache/'
         // });
         Cropper cropper = Cropper();
-        var imageFile = await cropper.cropImage(image);
-        if (imageFile != null) return imageFile;
+        imageFile = await cropper.cropImage(image);
       }
-      File imageFile = File(imageFilePath ?? image.path);
+      imageFile = File(imageFile.path ?? image.path);
       setState(() {});
       await fileOperations.saveImage(
         image: imageFile,
