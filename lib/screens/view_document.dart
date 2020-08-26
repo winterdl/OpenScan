@@ -1,16 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-// import 'package:flutter_scanner_cropper/flutter_scanner_cropper.dart';
-import 'package:openscan/Utilities/DatabaseHelper.dart';
 import 'package:openscan/Utilities/constants.dart';
 import 'package:openscan/Utilities/cropper.dart';
 import 'package:openscan/Utilities/file_operations.dart';
 import 'package:openscan/Widgets/Image_Card.dart';
 import 'package:openscan/screens/home_screen.dart';
-import 'package:openscan/screens/pdf_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_extend/share_extend.dart';
+import 'package:open_file/open_file.dart';
 
 class ViewDocument extends StatefulWidget {
   static String route = "ViewDocument";
@@ -35,6 +33,7 @@ class _ViewDocumentState extends State<ViewDocument> {
   String dirPath;
   String fileName;
   bool _statusSuccess;
+  var _openResult;
 
   void imageEditCallback() {
     getImages();
@@ -188,15 +187,12 @@ class _ViewDocumentState extends State<ViewDocument> {
                 );
                 Directory storedDirectory =
                     await getApplicationDocumentsDirectory();
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PDFScreen(
-                      path: '${storedDirectory.path}/$fileName.pdf',
-                    ),
-                  ),
-                );
-                File('${storedDirectory.path}/$fileName.pdf').deleteSync();
+                final result = await OpenFile.open('${storedDirectory.path}/$fileName.pdf');
+
+                setState(() {
+                  _openResult = "type=${result.type}  message=${result.message}";
+                  print(_openResult);
+                });
               },
             ),
             Builder(builder: (context) {
