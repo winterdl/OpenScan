@@ -4,6 +4,8 @@ An open source app that enables users to scan hardcopies of documents or notes a
 
 [<img src="https://github.com/Ethereal-Developers-Inc/OpenScan/blob/master/gplay%20badge.png" alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/details?id=com.ethereal.openscan)
 
+[<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height="80">](https://apt.izzysoft.de/fdroid/index/apk/com.ethereal.openscan)
+
 (Build instructions present at the bottom of the file)
 
 <img src="https://github.com/Ethereal-Developers-Inc/OpenScan/blob/master/assets/scan_g.jpeg" height=400>
@@ -40,23 +42,25 @@ We *differentiate* our self from the rest of the apps in the market by:
 * Upload your class notes to your choice of cloud storage instantly.
 
 ## PACKAGES USED
-path_provider: ^1.6.11
-image_picker: ^0.6.4
-image_cropper: ^1.2.3
-focused_menu: ^1.0.1
-directory_picker: ^1.0.0
-pdf: ^1.9.0
-share_extend: ^1.1.9
-url_launcher: ^5.4.11
-cupertino_icons: ^0.1.3
-flutter_full_pdf_viewer: ^1.0.6
-permission_handler: ^3.2.2
-shared_preferences: ^0.5.7+3
-flutter_speed_dial: ^1.2.5
-flutter_scanner_cropper:
-git:
-    url: https://github.com/Ethereal-Developers-Inc/flutter-scanner-plugin.git
-    path: flutter_scanner_cropper/
+- path_provider: ^1.6.11
+- image_picker: ^0.6.4
+- focused_menu: ^1.0.1
+- directory_picker: ^1.0.0
+- pdf: ^1.9.0
+- share_extend: ^1.1.9
+- url_launcher: ^5.4.11
+- cupertino_icons: ^0.1.3
+- flutter_full_pdf_viewer: ^1.0.6
+- permission_handler: ^3.2.2
+- shared_preferences: ^0.5.7+3
+- flutter_speed_dial: ^1.2.5
+- open_file: ^3.0.3
+- sqflite: ^1.3.1+2
+- reorderables: ^0.3.2
+- flutter_scanner_cropper:
+    - git:
+        - url: https://github.com/Ethereal-Developers-Inc/flutter-scanner-plugin.git
+        - path: flutter_scanner_cropper/
 
 # BUILD INSTRUCTIONS
 
